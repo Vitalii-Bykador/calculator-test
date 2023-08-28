@@ -1,0 +1,124 @@
+:root {
+    box-sizing: border-box;
+    --edge-radius: 8px;
+    --font-family: 'Open Sans', 'Courier New', sans-serif;
+    --font-color: white;
+    --border-btn: 0.9px solid black;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+body {
+    background-color: rgb(44, 45, 46);
+}
+
+body, * + * {
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+}
+
+.calculator {
+    border: 1px solid rgb(101, 102, 103);
+    border-radius: var(--edge-radius);
+    width: 233px;
+    align-self: center;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 8px;
+    width: 68px;
+    border-top-left-radius: var(--edge-radius);
+    border-top-right-radius: var(--edge-radius);
+}
+
+.top-btns {
+    border-radius: 50%;
+    width: 0.7em;
+    height: 0.7em;
+}
+
+.top-btn-red {
+    background-color: rgb(237, 106, 94);    
+}
+
+.top-btn-yellow {
+    background-color: rgb(245, 191, 79);
+}
+
+.top-btn-green {
+    background-color: rgb(98, 197, 84);
+}
+
+.display {
+    font-family: var(--font-family);
+    font-size: 3rem;
+    color: var(--font-color);
+    text-align: right;
+    height: 55px;
+    margin: 0 0.3em;
+    line-height: 0.9em;
+}
+
+.block-of-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+button {
+    font-family: var(--font-family);
+    font-size: 1.3rem;
+    color: var(--font-color);
+    text-align: center;
+    border: 0;
+    padding: 10px;
+    height: 48px;
+    width: 25%;
+}
+
+.btn-zero {
+    width: 50%;
+}
+
+.btn-top {
+    background-color: rgb(62, 62, 62);
+}
+
+.btn-digits {
+    background-color: rgb(93, 94, 95);
+}
+
+.btn-math {
+    background-color: rgb(242, 152, 33);
+}
+
+.btn-borders {
+    border-right: var(--border-btn);
+    border-bottom: var(--border-btn);
+}
+
+.btn-right {
+    border-right: var(--border-btn);
+}
+
+.btn-botton {
+    border-bottom: var(--border-btn);
+}
+
+.btn-border-zero {
+    border-bottom-left-radius: calc(var(--edge-radius) - 1px);
+}
+
+.btn-border-equal {
+    border-bottom-right-radius: calc(var(--edge-radius) - 1px);
+}
