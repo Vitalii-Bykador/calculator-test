@@ -10,6 +10,11 @@ const enum Operation {
     Plus            = "+",
     Equal           = "=",
 }
+const enum TypeKey {
+    None,
+    Digital,
+    Action,
+}
 
 const chain: {
     acc: number,
@@ -19,7 +24,7 @@ const chain: {
     opn: Operation.None
 };
 
-let flgClearDisplay = false;
+let previousKeyPress = TypeKey.None;
 
 document.addEventListener("click", (event: Event) => {
     if (event.target instanceof HTMLButtonElement) {
@@ -27,9 +32,9 @@ document.addEventListener("click", (event: Event) => {
         const button = event.target;
         // проверка "клика" по кнопке цифровой/кнопке с ","
         if (button.dataset.digit != undefined) {
-            if (flgClearDisplay) {
+            if (previousKeyPress === TypeKey.Action) {
                 display.innerHTML = "";
-                flgClearDisplay = false;
+                previousKeyPress = TypeKey.Digital;
             }
             display.innerHTML = (display.innerHTML === "0" && button.value !== ",") ? "" : display.innerHTML;
 
@@ -48,25 +53,19 @@ document.addEventListener("click", (event: Event) => {
                 chain.opn = (button.value as Operation);
                 chain.acc = toCalc(display.innerHTML);
             } else {
-                const val = toCalc(display.innerHTML);
-                switch (chain.opn) {
-                case Operation.Divide:
-                    chain.acc /= val;
-                    break;
-                case Operation.Multiplication:
-                    chain.acc *= val;
-                    break;
-                case Operation.Minus:
-                    chain.acc -= val;
-                    break;
-                case Operation.Plus:
-                    chain.acc += val;
-                    break;
+                if (previousKeyPress === TypeKey.Digital) {
+                    const val = toCalc(display.innerHTML);
+                    switch (chain.opn) {
+                    case Operation.Divide: chain.acc /= val; break;
+                    case Operation.Multiplication: chain.acc *= val; break;
+                    case Operation.Minus: chain.acc -= val; break;
+                    case Operation.Plus: chain.acc += val; break;
+                    }
                 }
                 display.innerHTML = toDispay(chain.acc);
                 chain.opn = (button.value as Operation);
             }
-            flgClearDisplay = true;
+            previousKeyPress = TypeKey.Action;
         }
     }
 });
