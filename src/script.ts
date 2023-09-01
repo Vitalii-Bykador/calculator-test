@@ -10,31 +10,32 @@ const enum Operation {
     Plus            = "+",
     Equal           = "=",
 }
-const enum TypeKey {
+const enum TypeButton {
     None,
     Digital,
     Action,
 }
 
-const chain: {
-    acc: number,
-    opn: Operation,
-} = {
+type Chain = {acc: number, val: number, opn: Operation};
+
+const chain: Chain = {
     acc: 0,
+    val: 0,
     opn: Operation.None
 };
 
-let previousKeyPress = TypeKey.None;
+let previousKeyPress = TypeButton.None;
 
 document.addEventListener("click", (event: Event) => {
     if (event.target instanceof HTMLButtonElement) {
         const display = (document.getElementById("display") as HTMLDivElement);
         const button = event.target;
-        // проверка "клика" по кнопке цифровой/кнопке с ","
+        const currOperation = (button.value as Operation);
+        // checking click to digital button or comma button
         if (button.dataset.digit != undefined) {
-            if (previousKeyPress === TypeKey.Action) {
+            if (previousKeyPress === TypeButton.Action) {
                 display.innerHTML = "";
-                previousKeyPress = TypeKey.Digital;
+                previousKeyPress = TypeButton.Digital;
             }
             display.innerHTML = (display.innerHTML === "0" && button.value !== ",") ? "" : display.innerHTML;
 
@@ -47,28 +48,52 @@ document.addEventListener("click", (event: Event) => {
             }
         }
 
-        // проверка "клика" по кнопке с действием/математической операцией
+        // checking click to math operation button
         if (button.dataset.action != undefined) {
+            // initialization of acc and op fields for structure "Chain"
             if (chain.opn === Operation.None) {
-                chain.opn = (button.value as Operation);
+                chain.opn = currOperation;
                 chain.acc = toCalc(display.innerHTML);
             } else {
-                if (previousKeyPress === TypeKey.Digital) {
-                    const val = toCalc(display.innerHTML);
-                    switch (chain.opn) {
-                    case Operation.Divide: chain.acc /= val; break;
-                    case Operation.Multiplication: chain.acc *= val; break;
-                    case Operation.Minus: chain.acc -= val; break;
-                    case Operation.Plus: chain.acc += val; break;
+                // this branch is executed if previous button was digital button. 
+                // This code relializes chain "digit" + "math operation" + "digit" + ...
+                if (previousKeyPress === TypeButton.Digital) {
+                    chain.val = toCalc(display.innerHTML);
+                    math_calculator(chain);
+                } else {
+                    // this is branch was added for realize functional of button "equal"
+                    if (currOperation === Operation.Equal) {
+                        math_calculator(chain);
                     }
                 }
                 display.innerHTML = toDispay(chain.acc);
-                chain.opn = (button.value as Operation);
+                if (currOperation !== Operation.Equal) {
+                    chain.opn = currOperation;                    
+                }
             }
-            previousKeyPress = TypeKey.Action;
+            if (currOperation === Operation.Sign) {
+                chain.acc = toCalc(display.innerHTML) * (-1);
+                display.innerHTML = toDispay(chain.acc);
+            }
+            if (currOperation === Operation.Percent) {
+                chain.val = 100;
+                chain.opn = Operation.Divide;
+                math_calculator(chain);
+                display.innerHTML = toDispay(chain.acc);
+            }
+            previousKeyPress = TypeButton.Action;
         }
     }
 });
+
+function math_calculator(chain: Chain): void {
+    switch (chain.opn) {
+        case Operation.Divide: chain.acc /= chain.val; break;
+        case Operation.Multiplication: chain.acc *= chain.val; break;
+        case Operation.Minus: chain.acc -= chain.val; break;
+        case Operation.Plus: chain.acc += chain.val; break;
+    }
+}
 
 function toCalc(value: string): number { 
     return Number(value.replace(",", "."));
